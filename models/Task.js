@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./User");
 
 const TaskSchema = new mongoose.Schema({
     nameTask: {
@@ -9,6 +10,13 @@ const TaskSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+
     createdAt: {
         type: Date,
         default: Date.now

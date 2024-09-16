@@ -1,15 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
+const auth = require('../middleware/authMiddleware')
 
 //sorry for my english that is very bad
 
 //create a new task
-router.post('/createTask', async(req, res) =>{
+router.post('/createTask', auth, async(req, res) =>{
     const {nameTask} = req.body;
-    const newTask = new Task({nameTask});
-    await newTask.save();
-    res.json(newTask);
+    const userId = req.user._id;
+
+    if(!userId){
+        return res.status(400).json({message: 'User ID is required'});
+    }
+
+    try{
+
+        const newTask = new Task({nameTask, userId});
+        await newTask.save();
+        res.json(newTask);
+
+    } catch(err){
+        res.status(500).json({message: 'Erro ao criar atividade', error: err.message})
+    }
+
 })
 
 
