@@ -48,4 +48,36 @@ router.delete('/deleteTask/:id', async(req,res) =>{
 })
 
 
+router.get('/userTasks', auth, async (req, res) => {
+    const userId = req.user._id;
+
+    try {
+        const userTasks = await Task.find({ userId });
+        res.json(userTasks);
+    } catch (err) {
+        res.status(500).json({ message: 'Erro ao buscar tarefas do usuário', error: err.message });
+    }
+});
+
+
+// Update task status
+router.put('/toggleTaskStatus/:id', auth, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const task = await Task.findById(id);
+        if (!task) {
+            return res.status(404).json({ message: 'Tarefa não encontrada' });
+        }
+
+        task.status = !task.status; // Alterna o status
+        await task.save();
+
+        res.json(task);
+    } catch (err) {
+        res.status(500).json({ message: 'Erro ao atualizar status da tarefa', error: err.message });
+    }
+});
+
+
 module.exports = router;
